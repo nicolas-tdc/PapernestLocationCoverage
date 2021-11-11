@@ -2,20 +2,21 @@
 
 
 from django.core.management.base import BaseCommand, CommandError
+from ._helpers import CsvToDbHelpers
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
         """
-        Add optional argument to delete existing DB entries.
+        Add optional argument to delete coverage sites database entries.
         :param parser:
         :return: void
         """
         parser.add_argument(
-            '--delete',
+            '--replace_sites',
             action='store_true',
-            help='Replace current providers, coverage sites and types',
+            help='Remove all coverage sites from database',
         )
 
     def handle(self, *args, **options):
@@ -25,13 +26,25 @@ class Command(BaseCommand):
         :param options:
         :return: Command success or failure message
         """
-        check_duplicates = False
+        csv_url = 'https://www.data.gouv.fr/s/resources/monreseaumobile/20180228-174515/2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv'
+        providers_data = {
+            '20801': {'name': 'Orange', 'country': 'FR'},
+            '20810': {'name': 'SFR', 'country': 'FR'},
+            '20815': {'name': 'Free', 'country': 'FR'},
+            '20820': {'name': 'Bouygue', 'country': 'FR'},
+        }
+        csv_model_mapping = {
+            'Operateur': 'Provider__code',
+            'X': 'CoverageSite__x',
+            'Y': 'CoverageSite__y',
+            '2G': 'CoverageType__2G',
+            '3G': 'CoverageType__3G',
+            '4G': 'CoverageType__4G',
+        }
+        helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping)
 
-        if options['delete']:
-            Provider.objects.all().delete()
+        if options['replace_sites']:
             CoverageSite.objects.all().delete()
-            CoverageType.objects.all().delete()
-        else:
-            check_duplicates = True
 
-        # Import CSV to DB / Create helpers file
+        # TODO Command Error
+        helpers.instantiate_models_from_reader()

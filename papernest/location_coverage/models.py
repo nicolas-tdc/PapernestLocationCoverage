@@ -14,6 +14,13 @@ class Provider(models.Model):
     countries = CountryField(multiple=True)
 
 
+class CoverageType(models.Model):
+    """
+    Model for coverage type attached to a coverage site.
+    """
+    name = models.CharField(max_length=2)
+
+
 class CoverageSite(models.Model):
     """
     Model for coverage site with coordinates attached to a provider.
@@ -21,11 +28,4 @@ class CoverageSite(models.Model):
     x_coordinates = models.FloatField()
     y_coordinates = models.FloatField()
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-
-
-class CoverageType(models.Model):
-    """
-    Model for coverage type attached to a coverage site.
-    """
-    name = models.CharField(max_length=2)
-    coverage_site = models.ForeignKey(CoverageSite, on_delete=models.CASCADE)
+    coverage_types = models.ManyToManyField(CoverageType)

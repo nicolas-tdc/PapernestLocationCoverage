@@ -1,48 +1,76 @@
 """Helpers for custom manage.py command lines"""
 
 
-import csv
+import csv, urllib.request, pyproj
+from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
-def read_csv():
-    """
-    Format data from CSV for model instantiation
-    """
-    # Read CSV from URL
-    with open('REPLACE.csv', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        # List by model
-        return [map_rows_to_fields(row) for row in reader]
+class CsvToDbHelpers():
+    def __init__(self, csv_url, providers_data, csv_model_mapping):
+        self.csv_url = csv_url
+        self.providers_data = providers_data
+        self.csv_model_mapping = csv_model_mapping
 
 
-def map_rows_to_fields(row):
-    """
-    Map CSV rows to model fields
-    :param row:
-    :return: Dict
-    """
-    csv_fields_to_model_fields = {
-        'Operateur': 'Provider__name',
-        'X': 'CoverageSite__x_coordinates',
-        'Y': 'CoverageSite__y_coordinates',
-        '2G': 'CoverageType__name',
-        '3G': 'CoverageType__name',
-        '4G': 'CoverageType__name',
-    }
-    return {
-        csv_fields_to_model_fields[key]: value
-        for key, value in row.items()
-    }
+    def instantiate_models_from_reader(self):
+        for row in self.read_csv().values():
+            # Provider
+            provider = Provider.objects.get_or_create(
+                ref_code=row['Provider']['code'], name=self.providers_data[row['Provider']['code']]['name'],
+                countries=self.providers_data[row['Provider']['code']]['country'],
+            )
+            # Coverage Type
+            available_coverage = []
+            for type, available in row['CoverageType'].items():
+                if available == '1':
+                    available_type = CoverageType.objects.get_or_create(name=type)
+                    available_coverage.append(available_type[0])
+            # Coverage site
+            lat_lng = self.lamber93_to_gps(row['CoverageSite']['x'], row['CoverageSite']['y'])
+            coverage_site = CoverageSite.objects.get_or_create(
+                x_coordinates=lat_lng[0], y_coordinates=lat_lng[1], provider=provider[0],
+            )
+            coverage_site[0].coverage_types.add(*available_coverage)
 
 
-def instantiate_models():
-    """
-    Instantiate coverage models from CSV formatted data
-    """
-    model_data = read_csv()
-    # Foreach models
-    # getattr(models, MODEL_NAME).bulk_create
+    def read_csv(self):
+        """
+        Format data from CSV for model instantiation
+        """
+        model_data = {}
 
-    MyModel.objects.bulk_create([
-        MyModel(**data) for data in model_data
-    ])
+        response = urllib.request.urlopen(self.csv_url)
+        lines = [l.decode('utf-8') for l in response.readlines()]
+        reader = csv.DictReader(lines, delimiter=';')
+
+        for index, row in enumerate(reader):
+            model_data[index] = {}
+            row_items = self.map_columns_to_fields(row).items()
+
+            for key, value in row_items:
+                model_and_field = key.split('__')
+                if model_and_field[0] in model_data[index]:
+                    model_data[index][model_and_field[0]][model_and_field[1]] = value
+                else:
+                    model_data[index][model_and_field[0]] = {model_and_field[1]: value}
+
+        return model_data
+
+
+    def map_columns_to_fields(self, row):
+        """
+        Map CSV columns to models and fields
+        :param row: CSV row to be mapped
+        :return: Dict
+        """
+        return {
+            self.csv_model_mapping[key]: value
+            for key, value in row.items()
+        }
+
+
+    def lamber93_to_gps(self, x, y):
+        lambert = pyproj.Proj('+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
+        wgs84 = pyproj.Proj('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
+        long, lat = pyproj.transform(lambert, wgs84, x, y)
+        return long, lat

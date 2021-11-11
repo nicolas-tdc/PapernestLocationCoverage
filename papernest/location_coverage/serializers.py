@@ -13,17 +13,17 @@ class ProviderSerializer(serializers.HyperlinkedModelSerializer):
     fields = ['name', 'ref_code', 'countries']
 
 
-class CoverageSiteSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    API Serializer for coverage sites.
-    """
-    model = CoverageSite
-    fields = ['x_coordinates', 'y_coordinates', 'provider']
-
-
 class CoverageTypeSerializer(serializers.HyperlinkedModelSerializer):
     """
     API Serializer for coverage types.
     """
     model = CoverageType
-    fields = ['name', 'coverage_site']
+    fields = ['name']
+
+
+class CoverageSiteSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    API Serializer for coverage sites.
+    """
+    model = CoverageSite
+    fields = ['x_coordinates', 'y_coordinates', 'provider', 'coverage_types']
