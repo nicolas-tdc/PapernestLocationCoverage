@@ -31,9 +31,11 @@ class LocationCoverageHelpers():
         return distance, closest_indexes
 
     def coverage_by_site_id(self):
-        coverage = {}
+        providers = {}
         coverage_sites = self.closest_coverage_site()
         for coverage_id in coverage_sites[1]:
             coverage_site = CoverageSite.objects.get(pk=coverage_id)
-            for name in coverage_site.name.all() not in coverage:
+            if coverage_site.provider.name not in providers:
+                # providers[coverage_site.provider.name] = DICT FOR COVERAGE_TYPES
                 pass
+        pass
