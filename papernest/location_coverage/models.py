@@ -28,4 +28,4 @@ class CoverageSite(models.Model):
     lat = models.CharField(max_length=100)
     long = models.CharField(max_length=100)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-    coverage_types = models.ManyToManyField(CoverageType)
+    coverage_types = models.ManyToManyField(CoverageType, related_name='coverage_types')

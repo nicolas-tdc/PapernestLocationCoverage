@@ -4,11 +4,10 @@
 import csv
 import urllib.request
 import pyproj
-# from pyproj import Proj, transform
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
-class CsvToDbHelpers():
+class CsvToDbHelpers:
     def __init__(self, csv_url, providers_data, csv_model_mapping):
         self.csv_url = csv_url
         self.providers_data = providers_data

@@ -48,11 +48,6 @@ class CoverageTypeViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def location_coverage(request):
-    available_coverage = []
     address = request.GET['q']
     helpers = LocationCoverageHelpers(address)
-    # for available in helpers.coverage_by_site_id().all():
-    #     available_coverage.append(available)
-    # for poll in Poll.objects.all():
-    #     for choice in poll.choice.all():
-    return Response({'coverage': helpers.closest_coverage_sites()})
+    return Response([helpers.providers_coverage()])

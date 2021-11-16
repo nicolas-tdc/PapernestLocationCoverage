@@ -1,12 +1,12 @@
 """Helpers for location coverage app"""
 
-
+from django.db.models import Prefetch
 from geopy.geocoders import Nominatim
 from scipy import spatial
-from .models import CoverageSite
+from .models import CoverageSite, CoverageType
 
 
-class LocationCoverageHelpers():
+class LocationCoverageHelpers:
     def __init__(self, address):
         self.address = address
         self.coordinates = self.geopy_coordinates_from_address()
@@ -30,12 +30,19 @@ class LocationCoverageHelpers():
         distance, closest_indexes = tree.query([self.coordinates], k=20)
         return distance, closest_indexes
 
-    def coverage_by_site_id(self):
+    def providers_coverage(self):
         providers = {}
-        coverage_sites = self.closest_coverage_site()
-        for coverage_id in coverage_sites[1]:
-            coverage_site = CoverageSite.objects.get(pk=coverage_id)
-            if coverage_site.provider.name not in providers:
-                # providers[coverage_site.provider.name] = DICT FOR COVERAGE_TYPES
-                pass
-        pass
+        coverage_sites = self.closest_coverage_sites()
+        for key, coverage_id in enumerate(coverage_sites[1][0]):
+            if coverage_sites[0][0][key] < 0.04:
+                coverage_site = CoverageSite.objects.get(pk=coverage_id)
+                if coverage_site.provider.name not in providers:
+                    coverage_types = {cv: False for cv in CoverageType.objects.values_list('name', flat=True)}
+                    available_types = coverage_site.coverage_types.values_list('name')
+                    for available in available_types:
+                        coverage_types[available[0]] = True
+                    providers[coverage_site.provider.name] = coverage_types
+            else:
+                return 'No close coverage site found.'
+
+        return providers
