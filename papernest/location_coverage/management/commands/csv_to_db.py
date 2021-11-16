@@ -35,7 +35,6 @@ class Command(BaseCommand):
             CoverageSite.objects.all().delete()
             CoverageType.objects.all().delete()
             Provider.objects.all().delete()
-
         elif options['reset_coverage_sites']:
             CoverageSite.objects.all().delete()
 
@@ -57,7 +56,6 @@ class Command(BaseCommand):
             '3G': 'CoverageType__3G',
             '4G': 'CoverageType__4G',
         }
-        helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping)
-
-        # TODO Command Error
+        helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping, ';')
         helpers.instantiate_models_from_reader()
+        self.stdout.write(self.style.SUCCESS('CSV successfully imported.'))

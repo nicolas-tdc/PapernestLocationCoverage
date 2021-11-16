@@ -25,7 +25,7 @@ class CoverageSite(models.Model):
     """
     Model for coverage site with coordinates attached to a provider.
     """
-    lat = models.CharField(max_length=100)
-    long = models.CharField(max_length=100)
+    lat = models.CharField(max_length=19)
+    long = models.CharField(max_length=19)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     coverage_types = models.ManyToManyField(CoverageType, related_name='coverage_types')
