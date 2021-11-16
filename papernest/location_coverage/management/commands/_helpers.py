@@ -22,9 +22,9 @@ class CsvToDbHelpers:
             )
             # Coverage Type
             available_coverage = []
-            for type, available in row['CoverageType'].items():
+            for coverage_type, available in row['CoverageType'].items():
                 if available == '1':
-                    available_type = CoverageType.objects.get_or_create(name=type)
+                    available_type = CoverageType.objects.get_or_create(name=coverage_type)
                     available_coverage.append(available_type[0])
             # Coverage site
             long_lat = self.lambert93_to_gps(row['CoverageSite']['x'], row['CoverageSite']['y'])

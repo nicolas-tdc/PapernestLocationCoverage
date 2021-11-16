@@ -9,12 +9,17 @@ from location_coverage.models import Provider, CoverageSite, CoverageType
 class Command(BaseCommand):
     def add_arguments(self, parser):
         """
-        Add optional argument to delete coverage sites database entries.
+        Add optional argument to delete existing database entries.
         :param parser:
         :return: void
         """
         parser.add_argument(
-            '--delete',
+            '--reset_all_coverage',
+            action='store_true',
+            help='Remove all coverage entries from database',
+        )
+        parser.add_argument(
+            '--reset_coverage_sites',
             action='store_true',
             help='Remove all coverage sites from database',
         )
@@ -26,7 +31,12 @@ class Command(BaseCommand):
         :param options:
         :return: Command success or failure message
         """
-        if options['delete']:
+        if options['reset_all_coverage']:
+            CoverageSite.objects.all().delete()
+            CoverageType.objects.all().delete()
+            Provider.objects.all().delete()
+
+        elif options['reset_coverage_sites']:
             CoverageSite.objects.all().delete()
 
         csv_url = (
