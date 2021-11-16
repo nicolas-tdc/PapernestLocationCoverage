@@ -14,7 +14,7 @@ class Command(BaseCommand):
         :return: void
         """
         parser.add_argument(
-            '--replace_sites',
+            '--delete',
             action='store_true',
             help='Remove all coverage sites from database',
         )
@@ -26,7 +26,13 @@ class Command(BaseCommand):
         :param options:
         :return: Command success or failure message
         """
-        csv_url = 'https://www.data.gouv.fr/s/resources/monreseaumobile/20180228-174515/2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv'
+        if options['delete']:
+            CoverageSite.objects.all().delete()
+
+        csv_url = (
+            'https://www.data.gouv.fr/s/resources/monreseaumobile/20180228-174515/'
+            '2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv'
+        )
         providers_data = {
             '20801': {'name': 'Orange', 'country': 'FR'},
             '20810': {'name': 'SFR', 'country': 'FR'},
@@ -42,9 +48,6 @@ class Command(BaseCommand):
             '4G': 'CoverageType__4G',
         }
         helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping)
-
-        if options['replace_sites']:
-            CoverageSite.objects.all().delete()
 
         # TODO Command Error
         helpers.instantiate_models_from_reader()

@@ -3,9 +3,11 @@
 
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from .models import Provider, CoverageSite, CoverageType
+from ._helpers import LocationCoverageHelpers
 from .serializers import (
     ProviderSerializer, CoverageSiteSerializer, CoverageTypeSerializer
 )
@@ -33,7 +35,6 @@ class CoverageSiteViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-
 class CoverageTypeViewSet(viewsets.ModelViewSet):
     """
     View to list or edit coverage types.
@@ -45,17 +46,13 @@ class CoverageTypeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-# class LocationCoverage(APIView):
-#     """
-#     View to get providers' mobile coverage for a given address.
-#
-#     * Only authenticated users are able to access this view.
-#     """
-#     permission_classes = [permissions.IsAuthenticated]
-#
-#     def get(self, request):
-#         """
-#         Return a list of providers with available coverage.
-#         """
-#         pass
-#         # return Response(coverage)
+@api_view(['GET'])
+def location_coverage(request):
+    available_coverage = []
+    address = request.GET['q']
+    helpers = LocationCoverageHelpers(address)
+    # for available in helpers.coverage_by_site_id().all():
+    #     available_coverage.append(available)
+    # for poll in Poll.objects.all():
+    #     for choice in poll.choice.all():
+    return Response({'coverage': helpers.closest_coverage_sites()})
