@@ -13,6 +13,11 @@ from .serializers import (
 )
 
 
+"""
+Models View Sets.
+"""
+
+
 class ProviderViewSet(viewsets.ModelViewSet):
     """
     View to list or edit coverage providers.
@@ -46,8 +51,17 @@ class CoverageTypeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+"""
+Custom API Views.
+"""
+
+
 @api_view(['GET'])
 def location_coverage(request):
-    address = request.GET['q']
+    """
+    :param request:
+    :return: View listing coverage by provider for a given address sent as a GET URL parameter.
+    """
+    address = request.GET.get('q')
     helpers = LocationCoverageHelpers(address)
     return Response([helpers.providers_coverage()])
