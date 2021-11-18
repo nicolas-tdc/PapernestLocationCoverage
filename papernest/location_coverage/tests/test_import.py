@@ -1,4 +1,4 @@
-"""Test for CSV to database import."""
+"""Tests for CSV to database import."""
 
 
 from django.test import TestCase

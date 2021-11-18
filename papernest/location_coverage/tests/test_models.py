@@ -1,4 +1,4 @@
-"""Test for coverage models."""
+"""Tests for coverage models."""
 
 
 from django.test import TestCase
@@ -8,7 +8,7 @@ from location_coverage.models import Provider, CoverageSite, CoverageType
 class ProviderModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Provider.objects.create(name="Orange", ref_code="20801", countries='FR')
+        Provider.objects.create(name='Orange', ref_code='20801', countries='FR')
 
     def test_name_label(self):
         provider = Provider.objects.get(id=1)
@@ -34,7 +34,7 @@ class ProviderModelTest(TestCase):
 class CoverageTypeModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        CoverageType.objects.create(name="2G")
+        CoverageType.objects.create(name='2G')
 
     def test_name_label(self):
         coverage_type = CoverageType.objects.get(id=1)
@@ -50,8 +50,8 @@ class CoverageTypeModelTest(TestCase):
 class CoverageSiteModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        orange = Provider.objects.create(name="Orange", ref_code="20801", countries='France')
-        CoverageSite.objects.create(lat="48.898640", long="2.378260", provider=orange)
+        orange = Provider.objects.create(name='Orange', ref_code='20801', countries='France')
+        CoverageSite.objects.create(lat='48.898640', long='2.378260', provider=orange)
 
     def test_lat_label(self):
         coverage_site = CoverageSite.objects.get(id=1)
