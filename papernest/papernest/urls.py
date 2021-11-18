@@ -10,6 +10,7 @@ from location_coverage import views
 """
 ViewSets Routing.
 """
+
 router = routers.DefaultRouter()
 router.register(r'providers', views.ProviderViewSet)
 router.register(r'coverage-sites', views.CoverageSiteViewSet)
@@ -19,6 +20,7 @@ router.register(r'coverage-types', views.CoverageTypeViewSet)
 """
 URL Patterns.
 """
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

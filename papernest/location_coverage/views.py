@@ -8,9 +8,7 @@ from rest_framework.response import Response
 
 from .models import Provider, CoverageSite, CoverageType
 from ._helpers import LocationCoverageHelpers
-from .serializers import (
-    ProviderSerializer, CoverageSiteSerializer, CoverageTypeSerializer
-)
+from .serializers import ProviderSerializer, CoverageSiteSerializer, CoverageTypeSerializer
 
 
 """

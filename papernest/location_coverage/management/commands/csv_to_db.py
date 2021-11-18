@@ -2,6 +2,7 @@
 
 
 from django.core.management.base import BaseCommand, CommandError
+
 from ._helpers import CsvToDbHelpers
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
@@ -18,6 +19,7 @@ class Command(BaseCommand):
             action='store_true',
             help='Remove all coverage entries from database',
         )
+
         parser.add_argument(
             '--reset_coverage_sites',
             action='store_true',
@@ -56,6 +58,8 @@ class Command(BaseCommand):
             '3G': 'CoverageType__3G',
             '4G': 'CoverageType__4G',
         }
+
+        # Import CSV data to models.
         helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping, ';')
         instantiation_msg = helpers.instantiate_models_from_reader()
         self.stdout.write(self.style.SUCCESS(instantiation_msg))

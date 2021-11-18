@@ -2,14 +2,19 @@
 
 
 from django.test import TestCase
+
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
 class ProviderModelTest(TestCase):
+    """
+    Tests the provider model.
+    """
     @classmethod
     def setUpTestData(cls):
         Provider.objects.create(name='Orange', ref_code='20801', countries='FR')
 
+    # Test fields labels and length.
     def test_name_label(self):
         provider = Provider.objects.get(id=1)
         field_label = provider._meta.get_field('name').verbose_name
@@ -32,10 +37,14 @@ class ProviderModelTest(TestCase):
 
 
 class CoverageTypeModelTest(TestCase):
+    """
+    Tests the coverage type model.
+    """
     @classmethod
     def setUpTestData(cls):
         CoverageType.objects.create(name='2G')
 
+    # Test fields labels and length.
     def test_name_label(self):
         coverage_type = CoverageType.objects.get(id=1)
         field_label = coverage_type._meta.get_field('name').verbose_name
@@ -48,11 +57,15 @@ class CoverageTypeModelTest(TestCase):
 
 
 class CoverageSiteModelTest(TestCase):
+    """
+    Tests the coverage site model.
+    """
     @classmethod
     def setUpTestData(cls):
         orange = Provider.objects.create(name='Orange', ref_code='20801', countries='France')
         CoverageSite.objects.create(lat='48.898640', long='2.378260', provider=orange)
 
+    # Test fields labels and length.
     def test_lat_label(self):
         coverage_site = CoverageSite.objects.get(id=1)
         field_label = coverage_site._meta.get_field('lat').verbose_name

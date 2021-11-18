@@ -2,12 +2,19 @@
 
 
 from django.test import TestCase
+
 from location_coverage.management.commands._helpers import CsvToDbHelpers
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
 class CSVToDbTest(TestCase):
+    """
+    Tests for CSV to DB command line import.
+    """
     def setUp(self):
+        """
+        Set up CSV to DB helpers for testing.
+        """
         csv_model_mapping = {
             'Operateur': 'Provider__code',
             'X': 'CoverageSite__x',
@@ -17,6 +24,9 @@ class CSVToDbTest(TestCase):
         self.helpers = CsvToDbHelpers('', providers_data, csv_model_mapping, ';')
 
     def test_map_column_to_fields(self):
+        """
+        Tests mapping of csv columns to model fields.
+        """
         row = {
             'Operateur': '20801',
             'X': '102980',
@@ -32,6 +42,9 @@ class CSVToDbTest(TestCase):
         self.assertEqual(mapped_fields, expected)
 
     def test_lambert93_to_gps(self):
+        """
+        Tests conversion of lambert93 coordinates to latitude and longitude.
+        """
         lambert93_coordinates = [
             {'X': '102980', 'Y': '6847973', 'expected': (-5.0888561153013425, 48.456574558829914)},
             {'X': '103113', 'Y': '6848661', 'expected': (-5.088018169414727, 48.46285384829354)},
@@ -42,6 +55,9 @@ class CSVToDbTest(TestCase):
             self.assertEqual(result, coordinates['expected'])
 
     def test_csv_data_formatter(self):
+        """
+        Tests csv data formatting.
+        """
         reader = [
             {
                 'Operateur': '20801',
@@ -60,6 +76,9 @@ class CSVToDbTest(TestCase):
         self.assertEqual(result, expected)
 
     def test_instantiate_models_from_reader(self):
+        """
+        Tests model instantiation from formatted csv data.
+        """
         self.helpers.model_data = {
             0: {
                 'Provider': {'code': '20801'},
@@ -84,11 +103,9 @@ class CSVToDbTest(TestCase):
         self.assertEqual(coverage_site.coverage_types.get(pk=coverage_type.pk), coverage_type)
 
     def test_read_csv_from_url(self):
-        urls = {
-            'url_error': 'URL validation error.',
-            'https://www.papernest.com/': 'CSV validation error.'
-        }
-        for url in urls:
-            self.helpers.csv_url = url
-            result = self.helpers.read_csv_from_url()
-            self.assertEqual(urls[url], result)
+        """
+        Tests URL validations.
+        """
+        self.helpers.csv_url = 'url_error'
+        result = self.helpers.read_csv_from_url()
+        self.assertEqual('URL validation error.', result)
