@@ -12,7 +12,7 @@ class ProviderSerializer(serializers.HyperlinkedModelSerializer):
     """
     class Meta:
         model = Provider
-        fields = ['name', 'ref_code', 'countries']
+        fields = ['name', 'ref_code']
 
 
 class CoverageTypeSerializer(serializers.HyperlinkedModelSerializer):
