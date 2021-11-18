@@ -9,9 +9,9 @@ Superuser logs : papernest_admin / WhoLikesPaperwork?0!
 
 Models :
 
-  - Provider (Orange, SFR...)
+  - Provider (Orange, SFR...).
 
-  - CoverageType (2G, 3G...)
+  - CoverageType (2G, 3G...).
 
   - CoverageSite : Coordinates, provider and coverage type.
 
@@ -47,7 +47,7 @@ Views:
 
     `location-coverage/?q=42+rue+papernest+75011+Paris`
 
-  - Pagination is set to 100 items per page
+  - Pagination is set to 100 items per page.
 
 ---
 
