@@ -8,7 +8,7 @@ from location_coverage.models import Provider, CoverageSite, CoverageType
 class ProviderModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Provider.objects.create(name="Orange", ref_code="20801", countries='France')
+        Provider.objects.create(name="Orange", ref_code="20801", countries='FR')
 
     def test_name_label(self):
         provider = Provider.objects.get(id=1)

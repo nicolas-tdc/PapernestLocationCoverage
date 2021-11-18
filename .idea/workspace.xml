@@ -6,8 +6,8 @@
       <change beforePath="$PROJECT_DIR$/papernest/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/papernest/location_coverage/management/commands/_helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/management/commands/_helpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/papernest/location_coverage/management/commands/csv_to_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/management/commands/csv_to_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/tests/test_import.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/tests/test_import.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/tests/test_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/tests/test_models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

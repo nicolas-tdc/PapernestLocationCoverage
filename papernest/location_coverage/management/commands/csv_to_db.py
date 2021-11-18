@@ -57,5 +57,5 @@ class Command(BaseCommand):
             '4G': 'CoverageType__4G',
         }
         helpers = CsvToDbHelpers(csv_url, providers_data, csv_model_mapping, ';')
-        helpers.instantiate_models_from_reader()
-        self.stdout.write(self.style.SUCCESS('CSV successfully imported.'))
+        instantiation_msg = helpers.instantiate_models_from_reader()
+        self.stdout.write(self.style.SUCCESS(instantiation_msg))

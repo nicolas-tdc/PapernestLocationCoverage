@@ -2,8 +2,12 @@
 
 
 import csv
+import io
 import urllib.request
 import pyproj
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
@@ -16,47 +20,77 @@ class CsvToDbHelpers:
         self.providers_data = providers_data
         self.csv_model_mapping = csv_model_mapping
         self.csv_delimiter = csv_delimiter
+        self.model_data = self.read_csv_from_url()
 
     def instantiate_models_from_reader(self):
         """
         Creates objects for location coverage models from CSV reader.
         :return: void
         """
-        for row in self.read_csv().values():
-            # Provider
-            provider = Provider.objects.get_or_create(
-                ref_code=row['Provider']['code'], name=self.providers_data[row['Provider']['code']]['name'],
-                countries=self.providers_data[row['Provider']['code']]['country'],
-            )
-            # Coverage Type
-            available_coverage = []
-            for coverage_type, available in row['CoverageType'].items():
-                if available == '1':
-                    available_type = CoverageType.objects.get_or_create(name=coverage_type)
-                    available_coverage.append(available_type[0])
-            # Coverage site
-            if row['CoverageSite']['x'].isdigit() and row['CoverageSite']['y'].isdigit():
-                long_lat = self.lambert93_to_gps(row['CoverageSite']['x'], row['CoverageSite']['y'])
-                coverage_site = CoverageSite.objects.get_or_create(
-                    long=str(long_lat[0]).replace(',', '.'), lat=str(long_lat[1]).replace(',', '.'),
-                    provider=provider[0],
+        if not isinstance(self.model_data, str):
+            for row in self.model_data.values():
+                # Provider
+                provider = Provider.objects.get_or_create(
+                    ref_code=row['Provider']['code'], name=self.providers_data[row['Provider']['code']]['name'],
+                    countries=self.providers_data[row['Provider']['code']]['country'],
                 )
-                coverage_site[0].coverage_types.add(*available_coverage)
 
-    def read_csv(self):
+                # Coverage Type
+                available_coverage = []
+                for coverage_type, available in row['CoverageType'].items():
+                    if available == '1':
+                        available_type = CoverageType.objects.get_or_create(name=coverage_type)
+                        available_coverage.append(available_type[0])
+
+                # Coverage site
+                if row['CoverageSite']['x'].isdigit() and row['CoverageSite']['y'].isdigit():
+                    long_lat = self.lambert93_to_gps(row['CoverageSite']['x'], row['CoverageSite']['y'])
+                    coverage_site = CoverageSite.objects.get_or_create(
+                        long=str(long_lat[0]).replace(',', '.'), lat=str(long_lat[1]).replace(',', '.'),
+                        provider=provider[0],
+                    )
+                    coverage_site[0].coverage_types.add(*available_coverage)
+            return 'CSV successfully imported.'
+        else:
+            return self.model_data
+
+    def read_csv_from_url(self):
         """
-        Format data from CSV for model instantiation.
+        Read CSV from url.
+        :return: Dict
+        """
+        validate = URLValidator()
+        try:
+            validate(self.csv_url)
+            response = urllib.request.urlopen(self.csv_url)
+            # CSV Validation
+            csv_file = io.TextIOWrapper(response, "utf-8")
+            try:
+                csv.Sniffer().sniff(csv_file.read(1024))
+                csv_file.seek(0)
+                # CSV to formatted data
+                lines = [line.decode('utf-8') for line in response.readlines()]
+                reader = csv.DictReader(lines, delimiter=self.csv_delimiter)
+                return self.csv_data_formatter(reader)
+            except (csv.Error, io.UnsupportedOperation):
+                return 'CSV validation error.'
+        except ValidationError:
+            return 'URL validation error.'
+
+    def csv_data_formatter(self, reader):
+        """
+        Format data from CSV DictReader for model instantiation.
         """
         model_data = {}
-        response = urllib.request.urlopen(self.csv_url)
-        lines = [line.decode('utf-8') for line in response.readlines()]
-        reader = csv.DictReader(lines, delimiter=self.csv_delimiter)
-        # TODO: Split here in two functions for tests with csv file instead of URL
         for index, row in enumerate(reader):
             model_data[index] = {}
+
             row_items = self.map_columns_to_fields(row).items()
             for key, value in row_items:
+                # Split model and field name
                 model_and_field = key.split('__')
+
+                # Add or create model and field entry
                 if model_and_field[0] in model_data[index]:
                     model_data[index][model_and_field[0]][model_and_field[1]] = value
                 else:
@@ -75,7 +109,8 @@ class CsvToDbHelpers:
             for key, value in row.items()
         }
 
-    def lambert93_to_gps(self, x, y):
+    @staticmethod
+    def lambert93_to_gps(x, y):
         """
         Convert lambert93 coordinates to GPS longitude and latitude.
         :param x: lambert93 x coordinate.
