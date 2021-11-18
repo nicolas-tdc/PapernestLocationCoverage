@@ -13,7 +13,7 @@ Models :
 
   - CoverageType (2G, 3G...).
 
-  - CoverageSite : Coordinates, provider and coverage type.
+  - CoverageSite : geographic coordinates, provider and coverage type.
 
 ---
 
