@@ -43,7 +43,7 @@ Views:
 
     `coverage-types/`
 
-  - One custom api_view `location_coverage` retrieving network coverage for a given address as a url get parameter :
+  - One custom api_view `location_coverage` retrieving network coverage for a given address :
 
     `location-coverage/?q=42+rue+papernest+75011+Paris`
 
