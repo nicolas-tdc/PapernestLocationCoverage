@@ -36,6 +36,7 @@ class LocationCoverageAPITests(APITestCase):
         """
         Tests the case where no coverage site was found close enough to the given address.
         """
+        # Create a far away coverage site.
         orange = Provider.objects.create(name="Orange", ref_code="20801", countries='FR')
         coverage_type = CoverageType.objects.create(name="2G")
         coverage_site = CoverageSite.objects.create(lat="48.729771273042154", long="2.3632344078211798", provider=orange)
@@ -49,13 +50,13 @@ class LocationCoverageAPITests(APITestCase):
         """
         Tests a successfully retrieved coverage for the given address.
         """
-        # Create first close coverage site
+        # Create first close coverage site.
         orange = Provider.objects.create(name="Orange", ref_code="20801", countries='FR')
         coverage_type_1 = CoverageType.objects.create(name="2G")
         coverage_site = CoverageSite.objects.create(lat="48.89572811690069", long="2.3878872706728376", provider=orange)
         coverage_site.coverage_types.add(coverage_type_1)
 
-        # Create second close coverage site
+        # Create second close coverage site.
         sfr = Provider.objects.create(name="SFR", ref_code="20810", countries='FR')
         coverage_type_2 = CoverageType.objects.create(name="3G")
         coverage_site = CoverageSite.objects.create(lat="48.88572811690069", long="2.3778872706728376", provider=sfr)
