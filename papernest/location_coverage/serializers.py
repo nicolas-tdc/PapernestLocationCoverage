@@ -3,7 +3,7 @@
 
 from rest_framework import serializers
 
-from .models import Provider, CoverageSite, CoverageType
+from location_coverage.models import Provider, CoverageSite, CoverageType
 
 
 class ProviderSerializer(serializers.HyperlinkedModelSerializer):

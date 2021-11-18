@@ -6,9 +6,9 @@ from rest_framework import permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Provider, CoverageSite, CoverageType
-from ._helpers import LocationCoverageHelpers
-from .serializers import ProviderSerializer, CoverageSiteSerializer, CoverageTypeSerializer
+from location_coverage.models import Provider, CoverageSite, CoverageType
+from location_coverage._helpers import LocationCoverageHelpers
+from location_coverage.serializers import ProviderSerializer, CoverageSiteSerializer, CoverageTypeSerializer
 
 
 """

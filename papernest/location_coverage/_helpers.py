@@ -4,7 +4,7 @@
 from geopy.geocoders import Nominatim
 from scipy import spatial
 
-from .models import CoverageSite, CoverageType
+from location_coverage.models import CoverageSite, CoverageType
 
 
 class LocationCoverageHelpers:

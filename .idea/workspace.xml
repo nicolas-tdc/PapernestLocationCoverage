@@ -3,6 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="36cdaf9c-b1aa-41ad-9fca-758ef8d14b89" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/_helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/_helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/papernest/location_coverage/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/papernest/location_coverage/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
