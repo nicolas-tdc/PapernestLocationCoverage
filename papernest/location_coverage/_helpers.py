@@ -52,21 +52,25 @@ class LocationCoverageHelpers:
             return coverage_sites
         else:
             # Iterate through closest found sites.
-            for key, coverage_site_id in enumerate(coverage_sites[1][0]):
+            for key, coverage_site_index in enumerate(coverage_sites[1][0]):
 
                 # Check distances from address for closest site and current site.
                 if coverage_sites[0][0][0] < self.allowed_max_distance:
                     if coverage_sites[0][0][key] < self.allowed_max_distance:
-                        coverage_site = CoverageSite.objects.get(pk=coverage_site_id + 1)
+                        first_site_id = CoverageSite.objects.earliest('id').id
+                        coverage_site_id = first_site_id + coverage_site_index
 
-                        # Check if close site provider has already been found.
-                        if coverage_site.provider.name not in providers:
-                            # Get and add available coverage types to close providers.
-                            coverage_types = {cv: False for cv in CoverageType.objects.values_list('name', flat=True)}
-                            available_types = coverage_site.coverage_types.values_list('name')
-                            for available in available_types:
-                                coverage_types[available[0]] = True
-                            providers[coverage_site.provider.name] = coverage_types
+                        if CoverageSite.objects.filter(pk=coverage_site_id).exists():
+                            coverage_site = CoverageSite.objects.get(pk=coverage_site_id)
+
+                            # Check if close site provider has already been found.
+                            if coverage_site.provider.name not in providers:
+                                # Get and add available coverage types to close providers.
+                                coverage_types = {cv: False for cv in CoverageType.objects.values_list('name', flat=True)}
+                                available_types = coverage_site.coverage_types.values_list('name')
+                                for available in available_types:
+                                    coverage_types[available[0]] = True
+                                providers[coverage_site.provider.name] = coverage_types
                 else:
                     providers = 'No close coverage site found.'
 
